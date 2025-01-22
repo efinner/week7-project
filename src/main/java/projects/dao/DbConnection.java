@@ -28,7 +28,7 @@ public static Connection getConnection() {
 	
 	try {
 		Connection conn = DriverManager.getConnection(url);
-		System.out.println("YAYY Successfully obtain a Connection!!!");
+		System.out.println("YAY! Successfully obtain a Connection!!!");
 		return conn;
 	} catch (SQLException e) {
 		throw new DbException(e);
