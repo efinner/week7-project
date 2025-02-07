@@ -37,29 +37,25 @@ public class ProjectsApp {
 	        boolean done = false;
 
 	        while (!done) {
-	            try {
-	                printOperations();
-	                int selection = getUserSelection();
+	            printOperations();  // This ensures operations are printed once per loop
+	            int selection = getUserSelection();
 
-	                switch (selection) {
-	                    case -1:
-	                        done = exitMenu();
-	                        break;
-	                    case 1:
-	                        createProject();
-	                        break;
-	                    case 2:
-	                        listProjects();
-	                        break;
-	                    case 3:
-	                        selectProject();
-	                        break;
-	                    default:
-	                        System.out.println("\n" + selection + " is not a valid selection. Try again.");
-	                        break;
-	                }
-	            } catch (Exception e) {
-	                System.out.println("Error: " + e.toString());
+	            switch (selection) {
+	                case -1:
+	                    done = exitMenu();
+	                    break;
+	                case 1:
+	                    createProject();
+	                    break;
+	                case 2:
+	                    listProjects();
+	                    break;
+	                case 3:
+	                    selectProject();
+	                    break;
+	                default:
+	                    System.out.println("\n" + selection + " is not a valid selection. Try again.");
+	                    break;
 	            }
 	        }
 	    }
@@ -69,7 +65,7 @@ public class ProjectsApp {
 	        Integer projectId = getIntInput("Enter a project Id to choose a project");
 
 	        curProject = projectService.fetchProjectById(projectId);
-	        System.out.println("Selected Project: " + curProject); // Debug statement
+	        System.out.println("Selected Project: " + curProject); 
 	    }
 	    private void listProjects() {
 	        List<Project> projects = projectService.fetchAllProjects();
@@ -131,9 +127,8 @@ public class ProjectsApp {
 	    }
 
 	    private int getUserSelection() {
-	        printOperations();
+	        
 	        Integer input = getIntInput("Enter a menu selection");
-
 	        return input == null ? -1 : input;
 	    }
 
