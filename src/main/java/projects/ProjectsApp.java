@@ -23,7 +23,9 @@ public class ProjectsApp {
 	private List<String> operations = List.of( 
 			"1) Add a project",
 			"2) List Projects",
-			"3) Select a Project"
+			"3) Select a Project",
+			"4) Update project details" ,
+			"5) Delete a project"
 	);
 	// @formatter:on
 	 private ProjectService projectService = new ProjectService();
@@ -53,6 +55,13 @@ public class ProjectsApp {
 	                case 3:
 	                    selectProject();
 	                    break;
+	                    
+	                case 4:
+	                    updateProjectDetails();  
+	                    break;
+	                case 5:
+						deleteProject();
+						break;
 	                default:
 	                    System.out.println("\n" + selection + " is not a valid selection. Try again.");
 	                    break;
@@ -60,12 +69,69 @@ public class ProjectsApp {
 	        }
 	    }
 
+		    private void deleteProject() {
+		    	listProjects();
+				Integer projectId = getIntInput("Enter the id of the project you wish to delete");
+				
+				projectService.deleteProject(projectId);
+				
+				System.out.println("Project "+projectId+" was deleted succesfully.");
+				
+				//Check to see if curProject Id is = deleted project, if so set curProject to null
+				if(Objects.nonNull(curProject)&&curProject.getProjectId().equals(projectId))
+					curProject=null;
+				
+			}
+	
+			private void updateProjectDetails() {
+		        if (curProject == null) {
+		            System.out.println("\nPlease select a project.");
+		            return;
+		        }
+	
+		        // Get new info for project
+		        String projectName = getStringInput("Enter the project name [" + curProject.getProjectName() + "]");
+		        BigDecimal estimatedHours = getDecimalInput("Enter the project estimated hours [" + curProject.getEstimatedHours() + "]");
+		        BigDecimal actualHours = getDecimalInput("Enter the project actual hours [" + curProject.getActualHours() + "]");
+		        Integer difficulty = getIntInput("Enter the project difficulty [" + curProject.getDifficulty() + "]");
+		        String notes = getStringInput("Enter the project notes [" + curProject.getNotes() + "]");
+	
+		        // Create a new project object
+		        Project project = new Project();
+		        project.setProjectId(curProject.getProjectId());
+		        project.setProjectName(Objects.isNull(projectName) ? curProject.getProjectName() : projectName);
+		        project.setEstimatedHours(Objects.isNull(estimatedHours) ? curProject.getEstimatedHours() : estimatedHours);
+		        project.setActualHours(Objects.isNull(actualHours) ? curProject.getActualHours() : actualHours);
+		        project.setDifficulty(Objects.isNull(difficulty) ? curProject.getDifficulty() : difficulty);
+		        project.setNotes(Objects.isNull(notes) ? curProject.getNotes() : notes);
+	
+		        // Call the service to update the project
+		        projectService.modifyProjectDetails(project);
+	
+		        // Refresh the current project
+		        curProject = projectService.fetchProjectById(curProject.getProjectId());
+	
+		        System.out.println("\nProject details updated successfully.");
+		        System.out.println("Updated Project: " + curProject);
+		    }
+
 	    private void selectProject() {
 	        listProjects();
-	        Integer projectId = getIntInput("Enter a project Id to choose a project");
+	        Integer projectId = getIntInput("Enter a project ID to choose a project");
+
+	        if (projectId == null) {
+	            System.out.println("Invalid project ID. Please try again.");
+	            return;
+	        }
 
 	        curProject = projectService.fetchProjectById(projectId);
-	        System.out.println("Selected Project: " + curProject); 
+
+	        if (curProject == null) {
+	            System.out.println("Project with ID=" + projectId + " does not exist.");
+	        } else {
+	            System.out.println("Selected Project: " + curProject);
+	        }
+	    
 	    }
 	    private void listProjects() {
 	        List<Project> projects = projectService.fetchAllProjects();
